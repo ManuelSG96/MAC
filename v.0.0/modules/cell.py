@@ -1,0 +1,1 @@
+# Aqui se encuentran las clases de celdas que existen
