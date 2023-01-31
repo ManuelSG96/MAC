@@ -9,6 +9,7 @@ class Cell:
     - nodes: list: list of nodes
     - elements: list: list of elements
     - materials: int: Id of the material
+    - Borrar
 
     Methods:
     - init: initialize the cell
