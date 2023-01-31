@@ -17,18 +17,16 @@ class Cell:
     
     """
     def __init__(self, kind, id, nodes, elements, materials):
-        self.kind = kind
+        self.__kind = kind
         self.id = id
         self.nodes = nodes
         self.elements = elements
-        self.materials = materials
 
     def set_cell(self, type, id, nodes, elements, materials):
         self.type = type
         self.id = id
         self.nodes = nodes
         self.elements = elements
-        self.materials = materials
     
     def get_cell(self):
         return self.type, self.id, self.nodes, self.elements, self.materials
