@@ -1,8 +1,13 @@
 """
 Module with global variables for the Metamaterial Analysis Code (MAC) package.
 """
-
+global NODES_SET
 NODES_SET = set()
-NODES_COUNT = 0
+
+global ELEMENTS_SET
 ELEMENTS_SET = set()
-ELEMENTS_COUNT = 0
+
+MAC_VERSION = "0.0"
+
+AUTHOR = "Manuel Sanchez Garcia"
+CONTRIBUTORS = []

@@ -9,7 +9,7 @@ class MACMaterial:
     Attributes:
         ID: material ID
         StressStrain: stress-strain curve of the material
-        Type: type of the material (MAT1, MATS1, MAT2, etc)
+        Type: type of the material (Supported: MATS1)
         NonLinearity: type of non-linearity of the material (LINEAR, PLASTIC, NLELAST)
         YieldStress: Stress at the yield point in the strain-stress curve of the material
     """
