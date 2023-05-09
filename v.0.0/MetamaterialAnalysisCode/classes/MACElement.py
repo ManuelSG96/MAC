@@ -2,6 +2,9 @@
 Element module for the Metamaterial Analysis Code (MAC). It represents a single element.
 """
 
+from .MACNode import MACNode
+from .MACProperty import MACProperty
+from .MACMaterial import MACMaterial
 
 class MACElement:
     """
@@ -17,7 +20,8 @@ class MACElement:
 
     """
 
-    def __init__(self, id_: int, type_: str, nodes: list, material: list, properties: list, vvector: tuple):
+    def __init__(self, id_: int, type_: str, nodes: list[MACNode], material: list[MACMaterial],
+                 properties: list[MACProperty], vvector: tuple):
         """
         Constructor for MACElement class
         """
@@ -60,17 +64,20 @@ class MACElement:
             case "CBEAM":
 
                 idspaces = " " * (8 - len(str(self.ID)))
-                typespaces = " " * (8 - len(str(self.Type)))
-                node0spaces = " " * (8 - len(str(self.Nodes[0])))
-                node1spaces = " " * (8 - len(str(self.Nodes[1])))
+                propspaces = " " * (8 - len(str(self.Property[0].ID)))
+                node0spaces = " " * (8 - len(str(self.Nodes[0].ID)))
+                node1spaces = " " * (8 - len(str(self.Nodes[1].ID)))
                 vv0spaces = " " * (8 - len(str(self.Vvector[0])))
                 vv1spaces = " " * (8 - len(str(self.Vvector[1])))
                 vv2spaces = " " * (8 - len(str(self.Vvector[2])))
 
-                return f"CBEAM   {self.ID}{idspaces}{self.Type}{typespaces}{self.Nodes[0]}{node0spaces}" + \
-                       f"{self.Nodes[1]}{node1spaces}{self.Vvector[0]}{vv0spaces}{self.Vvector[1]}{vv1spaces}" + \
-                       f"{self.Vvector[2]}{vv2spaces}"
+                return f"CBEAM   {self.ID}{idspaces}{self.Property[0].ID}{propspaces}{self.Nodes[0].ID}{node0spaces}" + \
+                       f"{self.Nodes[1].ID}{node1spaces}{self.Vvector[0]}{vv0spaces}{self.Vvector[1]}{vv1spaces}" + \
+                       f"{self.Vvector[2]}{vv2spaces}\n"
 
             case "CQUAD":
 
                 return "CQUAD is not yet implemented"
+
+    def __hash__(self):
+        return hash(self.ID)

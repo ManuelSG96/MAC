@@ -35,6 +35,10 @@ class MACNode:
         else:
             return False
 
+    # Method to hash a node. It uses the coordinates of the node as hash to be implemented in a set.
+    def __hash__(self):
+        return hash(self.Coords)
+
     # Method to print a node. It uses the 8 characters format of Optistruct.
     def __str__(self):
 
@@ -42,19 +46,8 @@ class MACNode:
         systemspaces = " " * 8
 
         # 8 characters for each coordinate. It uses scientific notation with 3 decimal places.
-        x = "{:.2e}".format(self.Coords[0])
-        if self.Coords[0] >= 0:
-            x = "+" + x
-        x = x[:-2] + x[-1:]
+        x = "{:.5f}".format(self.Coords[0])[:7]
+        y = "{:.5f}".format(self.Coords[1])[:7]
+        z = "{:.5f}".format(self.Coords[2])[:7]
 
-        y = "{:.2e}".format(self.Coords[1])
-        if self.Coords[1] >= 0:
-            y = "+" + y
-        y = y[:-2] + y[-1:]
-
-        z = "{:.2e}".format(self.Coords[2])
-        if self.Coords[2] >= 0:
-            z = "+" + z
-        z = z[:-2] + z[-1:]
-
-        return f"GRID    {self.ID}{idspaces}{systemspaces}{x}{y}{z}"
+        return f"GRID    {self.ID}{idspaces}{systemspaces}{x} {y} {z} \n"

@@ -2,11 +2,14 @@
 FEM model module for the Metamaterial Analysis Code (MAC) package. It represents the whole model.
 """
 from datetime import date
+from time import time
 
-from MACMaterial import MACMaterial
-from MACProperty import MACProperty
-from MACStructure import MACAuxetic
-from MACGlobals import MAC_VERSION
+from .MACMaterial import MACMaterial
+from .MACProperty import MACProperty
+from .MACStructure import MACAuxetic
+from .MACGlobals import MAC_VERSION, ELEMENTS_SET, NODES_SET
+from .MACCell import MACCell
+from MetamaterialAnalysisCode._modules._centers_RPA import _centers_RPA
 
 
 class MACModel:
@@ -21,7 +24,7 @@ class MACModel:
         CellProperty: MACProperty of the cell
     """
 
-    def __init__(self, modeldimensions: tuple[float], cellstructure: object, cellmaterial: list[MACMaterial],
+    def __init__(self, modeldimensions: tuple[float], cellstructure: MACAuxetic, cellmaterial: list[MACMaterial],
                  cellproperty: list[MACProperty]):
         """
         Constructor for MACModel class
@@ -30,22 +33,26 @@ class MACModel:
         self.__cellstructure = cellstructure
         self.__cellmaterial = cellmaterial
         self.__cellproperty = cellproperty
-        self.__nodedict = {}
-        self.__elementdict = {}
         self.__celldict = {}
 
-        if self.__cellstructure == "AUXETIC":
+        # Function to generate the cells centers for auxetic structures
+        cloud_set = _centers_RPA(a=round((self.__cellstructure.Hcapas)**0.5 * 0.5 * self.__cellstructure.Stepy, 4),
+                                 h=round(2 * (self.__cellstructure.Hprisma + self.__cellstructure.Heightstar), 4),
+                                 stx=round(self.__cellstructure.Stepx, 4),
+                                 dimensions=self.__modeldimensions
+                                 )
 
-            pass
+        for i, center in enumerate(cloud_set):
+            nodes, elements = self.__cellstructure.build(
+                                                         cellcenter=center, mat=self.__cellmaterial[0],
+                                                         prop=self.__cellproperty[0], vvector=(1, 0, 0)
+                                                        )
 
-        else:
-            print("Cell structure not recognized. Please choose between: AUXETIC")
+            self.__celldict[i] = MACCell(i, self.__cellstructure, center, elements, nodes, self.__cellmaterial,
+                                         self.__cellproperty)
 
-    def __center__(self) -> set[tuple[float]]:
-        """
-        Calculates the center of the cell
-        """
-        pass
+        self.__nodedict = {node.ID: node for node in NODES_SET}
+        self.__elementdict = {element.ID: element for element in ELEMENTS_SET}
 
     def write_fem(self, path: str, writeheader: bool = True) -> None:
         """
@@ -80,14 +87,33 @@ class MACModel:
                          "#" * 80 + "\n"
                 w.writelines(header)
 
-                for node in self.__nodedict.values():
-                    w.writelines(str(node))
+                w.writelines("###\n### Grids\n###\n")
+
+                for node in sorted(self.__nodedict.keys()):
+                    w.writelines(str(self.__nodedict[node]))
+
+                w.writelines("###\n### Elements\n###\n")
 
                 for element in self.__elementdict.values():
                     w.writelines(str(element))
 
+                w.writelines("###\n### Properties\n###\n")
+
                 for prop in self.__cellproperty:
                     w.writelines(str(prop))
 
+                w.writelines("###\n### Materials\n###\n")
+
                 for material in self.__cellmaterial:
                     w.writelines(str(material))
+
+
+def set_model(**kwargs) -> MACModel:
+    """
+    Function that creates a MACModel object. It uses the kwargs dictionary.
+    model = set_model(modeldimensions=(x, y, z), cellstructure=MACAuxetic, cellmaterial=[MACMaterial],
+                      cellproperty=[MACProperty])
+    """
+    model = MACModel(modeldimensions=kwargs["modeldimensions"], cellstructure=kwargs["cellstructure"],
+                     cellmaterial=kwargs["cellmaterial"], cellproperty=kwargs["cellproperty"])
+    return model

@@ -2,6 +2,12 @@
 Cell module for Metamaterial Analysis Code (MAC). It represents a single cell, made by different elements.
 """
 
+from .MACNode import MACNode
+from .MACElement import MACElement
+from .MACProperty import MACProperty
+from .MACMaterial import MACMaterial
+from .MACStructure import MACAuxetic
+
 class MACCell:
     """
     Cell class for Metamaterial Analysis Code (MAC). It represents a single cell, made by different elements.
@@ -18,15 +24,14 @@ class MACCell:
 
     """
 
-    def __init__(self, id: int, structure: str, coords: tuple, size: float, elements: list, nodes: list, material: list,
-                 properties: list):
+    def __init__(self, id: int, structure: MACAuxetic, coords: tuple, elements: tuple[MACElement], nodes: tuple[MACNode],
+                 material: list[MACMaterial], properties: list[MACProperty]):
         """
         Constructor for MACCell class
         """
         self.__id = id
         self.__structure = structure
         self.__coords = coords
-        self.__size = size
         self.__elements = elements
         self.__nodes = nodes
         self.__material = material
@@ -49,11 +54,11 @@ class MACCell:
         return self.__size
 
     @property
-    def Elements(self) -> list:
+    def Elements(self) -> tuple:
         return self.__elements
 
     @property
-    def Nodes(self) -> list:
+    def Nodes(self) -> tuple:
         return self.__nodes
 
     @property

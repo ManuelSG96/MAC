@@ -4,8 +4,8 @@ Main module for the Metamaterial Analysis Code (MAC) package. It represents the 
 
 from os import path, remove
 
-from MACModel import MACModel
-from MACGlobals import MAC_VERSION
+from .MACModel import MACModel
+from .MACGlobals import MAC_VERSION
 from datetime import date
 
 
@@ -68,3 +68,8 @@ class MACAnalysis:
 
         # Write model calling the model method. header=False to avoid writing the header again.
         self.__model.write_fem(path, writeheader=False)
+
+
+def set_analysis(model: MACModel, subcases: list, loadcases: list, parameters: list) -> MACAnalysis:
+    analysis = MACAnalysis(model, subcases, loadcases, parameters)
+    return analysis

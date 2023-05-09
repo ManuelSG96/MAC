@@ -2,9 +2,9 @@
 Property module with properties classes for the Metamaterial Analysis Code (MAC). There are one class per type of
 property. They all derivative of the base class MACProperty, which is an abstract class.
 """
-
 from abc import ABC, abstractmethod
 
+from .MACMaterial import MACMaterial
 class MACProperty(ABC):
     """
     Property class for the Metamaterial Analysis Code (MAC). It represents a single property.
@@ -16,7 +16,7 @@ class MACProperty(ABC):
     """
 
     @abstractmethod
-    def __init__(self, id: int, type: str, material: list):
+    def __init__(self, id: int, type: str, material: list[MACMaterial]):
         """
         Constructor for MACProperty class
         """
@@ -83,12 +83,26 @@ class MACBeam(MACProperty):
     def __str__(self):
 
         idspaces = " " * (8 - len(str(self.ID)))
-        materialspaces = " " * (8 - len(str(self.__material[0])))
-        area = ":.5f".format(self.Area)[:8]
-        inertia1 = ":.5f".format(self.I1)[:8]
-        inertia2 = ":.5f".format(self.I2)[:8]
-        inertia12 = ":.5f".format(self.I12)[:8]
-        torsion = ":.5f".format(self.J)[:8]
+        materialspaces = " " * (8 - len(str(self.Material[0].ID)))
+        area = "{:.5f}".format(self.Area)[:7]
+        inertia1 = "{:.5f}".format(self.I1)[:7]
+        inertia2 = "{:.5f}".format(self.I2)[:7]
+        inertia12 = "{:.5f}".format(self.I12)[:7]
+        torsion = "{:.5f}".format(self.J)[:7]
 
-        return f"PBEAM   {self.ID}{idspaces}{self.__material[0]}{materialspaces}{area}{inertia1}{inertia2}" + \
-               f"{inertia12}{torsion}"
+        return f"PBEAM   {self.ID}{idspaces}{self.Material[0].ID}{materialspaces}{area} {inertia1} {inertia2} " + \
+               f"{inertia12} {torsion} \n"
+
+
+def set_property(**kwargs) -> MACBeam:
+    """
+    Function to create a MACProperty based object. It uses the kwargs dictionary. Supported subclasses are:
+        - MACBeam: beam = set_property(id=int, type="PBEAM", material=MACMaterial, area=float, i1=float, i2=float, i12=float, j=float)
+    """
+
+    if kwargs["type"] == "PBEAM":
+        return MACBeam(id=kwargs["id"], type=kwargs["type"], material=kwargs["material"], area=kwargs["area"],
+                       i1=kwargs["i1"], i2=kwargs["i2"], i12=kwargs["i12"], j=kwargs["j"])
+
+    else:
+        raise ValueError("The property type is not supported.")
