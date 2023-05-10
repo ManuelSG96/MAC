@@ -5,6 +5,8 @@ property. They all derivative of the base class MACProperty, which is an abstrac
 from abc import ABC, abstractmethod
 
 from .MACMaterial import MACMaterial
+
+
 class MACProperty(ABC):
     """
     Property class for the Metamaterial Analysis Code (MAC). It represents a single property.
@@ -35,6 +37,7 @@ class MACProperty(ABC):
     @property
     def Material(self):
         return self.__material
+
 
 class MACBeam(MACProperty):
     """
@@ -79,7 +82,7 @@ class MACBeam(MACProperty):
     def J(self):
         return self.__j
 
-    # Method to print a node. It uses the 8 characters format of Optistruct.
+    # Method to print the property. It uses the 8 characters format of Optistruct.
     def __str__(self):
 
         idspaces = " " * (8 - len(str(self.ID)))
@@ -94,15 +97,47 @@ class MACBeam(MACProperty):
                f"{inertia12} {torsion} \n"
 
 
-def set_property(**kwargs) -> MACBeam:
+class MACBeamL(MACProperty):
+    """
+    Beam property with a specific section. Based on the PBEAML property of optistruct.
+
+    Attributes:
+        Section: Type of section. Supported: ROD
+        Dim1: First dimension. A value must be given
+    """
+    def __init__(self, id: int, type: str, material: list[MACMaterial], section: str, dim1: float):
+        super().__init__(id, type, material)
+        self.Section = section
+        self.Dim1 = dim1
+
+    # Method to print the property. It uses the 8 characters format of Optistruct.
+    def __str__(self):
+
+        idspaces = " " * (8 - len(str(self.ID)))
+        materialspaces = " " * (8 - len(str(self.Material[0].ID)))
+        eight = " "*8
+        sectspaces = " " * (8 - len(str(self.Section)))
+        dim1 = "{:.5f}".format(self.Dim1)[:7]
+
+        return f"PBEAML  {self.ID}{idspaces}{self.Material[0].ID}{materialspaces}{eight}{self.Section}{sectspaces}\n" +\
+               f"{eight}{dim1}\n"
+
+
+def set_property(**kwargs) -> MACBeam | MACBeamL:
     """
     Function to create a MACProperty based object. It uses the kwargs dictionary. Supported subclasses are:
-        - MACBeam: beam = set_property(id=int, type="PBEAM", material=MACMaterial, area=float, i1=float, i2=float, i12=float, j=float)
+        - MACBeam:  beam = set_property(id=int, type="PBEAM", material=[MACMaterial], area=float, i1=float, i2=float, i12=float, j=float)
+        - MACBeamL: beam = set_property(id=int, type="PBEAML", material=[MACMaterial], section="ROD", dim1=float)
     """
 
     if kwargs["type"] == "PBEAM":
         return MACBeam(id=kwargs["id"], type=kwargs["type"], material=kwargs["material"], area=kwargs["area"],
                        i1=kwargs["i1"], i2=kwargs["i2"], i12=kwargs["i12"], j=kwargs["j"])
+
+    elif kwargs["type"] == "PBEAML":
+
+        return MACBeamL(id=kwargs["id"], type=kwargs["type"], material=kwargs["material"], section=kwargs["section"],
+                        dim1=kwargs["dim1"])
 
     else:
         raise ValueError("The property type is not supported.")

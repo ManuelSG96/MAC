@@ -37,7 +37,7 @@ class MACModel:
 
         # Function to generate the cells centers for auxetic structures
         cloud_set = _centers_RPA(a=round((self.__cellstructure.Hcapas)**0.5 * 0.5 * self.__cellstructure.Stepy, 4),
-                                 h=round(2 * (self.__cellstructure.Hprisma + self.__cellstructure.Heightstar), 4),
+                                 h=round(self.__cellstructure.Hprisma, 4),
                                  stx=round(self.__cellstructure.Stepx, 4),
                                  dimensions=self.__modeldimensions
                                  )

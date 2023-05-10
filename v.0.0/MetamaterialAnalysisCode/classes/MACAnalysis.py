@@ -2,7 +2,7 @@
 Main module for the Metamaterial Analysis Code (MAC) package. It represents the whole analysis.
 """
 
-from os import path, remove
+from os import remove
 
 from .MACModel import MACModel
 from .MACGlobals import MAC_VERSION
@@ -71,5 +71,9 @@ class MACAnalysis:
 
 
 def set_analysis(model: MACModel, subcases: list, loadcases: list, parameters: list) -> MACAnalysis:
+    """
+    Function to set the analysis. It returns a MACAnalysis object.
+    """
     analysis = MACAnalysis(model, subcases, loadcases, parameters)
+
     return analysis
