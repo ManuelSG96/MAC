@@ -6,7 +6,7 @@ from .MACMaterial import MACMaterial
 from .MACProperty import MACProperty
 from .MACNode import MACNode
 from .MACElement import MACElement
-from .MACGlobals import NODES_SET, ELEMENTS_SET
+from .MACGlobals import NODES_DICT, ELEMENTS_SET
 
 
 class MACAuxetic:
@@ -69,281 +69,136 @@ class MACAuxetic:
         x = round(cellcenter[0], 4)
         y = round(cellcenter[1], 4)
         z = round(cellcenter[2] + self.__djoint, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        if len(NODES_SET) == 0:
-            M1 = MACNode(len(NODES_SET) + 1, (x, y, z))
-            NODES_SET.add(M1)
-            del aux
-        else:
-            for existingnode in NODES_SET:
-                if existingnode == aux:
-                    M1 = existingnode
-                    break
-                else:
-                    M1 = aux
-            NODES_SET.add(M1)
-            del aux
+        M1 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = M1
 
         # M2
         x = round(cellcenter[0], 4)
         y = round(cellcenter[1], 4)
         z = round(cellcenter[2] - self.__djoint, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                M2 = existingnode
-                break
-            else:
-                M2 = aux
-        NODES_SET.add(M2)
-        del aux
+        M2 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = M2
 
         # S1
         x1 = round(cellcenter[0] + self.__stepx, 4)
         y1 = round(cellcenter[1], 4)
         z1 = round(cellcenter[2] + self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x1, y1, z1))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                S1 = existingnode
-                break
-            else:
-                S1 = aux
-        NODES_SET.add(S1)
-        del aux
+        S1 = NODES_DICT.get((x1, y1, z1), MACNode(len(NODES_DICT) + 1, (x1, y1, z1)))
+        NODES_DICT[(x1, y1, z1)] = S1
 
         # S2
         x2 = round(cellcenter[0] + self.__stepx/2, 4)
         y2 = round(cellcenter[1] - (self.__hcapas**0.5)/2 * self.__stepy, 4)
         z2 = round(cellcenter[2] - self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x2, y2, z2))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                S2 = existingnode
-                break
-            else:
-                S2 = aux
-        NODES_SET.add(S2)
-        del aux
+        S2 = NODES_DICT.get((x2, y2, z2), MACNode(len(NODES_DICT) + 1, (x2, y2, z2)))
+        NODES_DICT[(x2, y2, z2)] = S2
 
         # S3
         x3 = round(cellcenter[0] - self.__stepx/2, 4)
         y3 = round(cellcenter[1] - (self.__hcapas**0.5)/2 * self.__stepy, 4)
         z3 = round(cellcenter[2] + self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x3, y3, z3))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                S3 = existingnode
-                break
-            else:
-                S3 = aux
-        NODES_SET.add(S3)
-        del aux
+        S3 = NODES_DICT.get((x3, y3, z3), MACNode(len(NODES_DICT) + 1, (x3, y3, z3)))
+        NODES_DICT[(x3, y3, z3)] = S3
 
         # S4
         x4 = round(cellcenter[0] - self.__stepx, 4)
         y4 = round(cellcenter[1], 4)
         z4 = round(cellcenter[2] - self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x4, y4, z4))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                S4 = existingnode
-                break
-            else:
-                S4 = aux
-        NODES_SET.add(S4)
-        del aux
+        S4 = NODES_DICT.get((x4, y4, z4), MACNode(len(NODES_DICT) + 1, (x4, y4, z4)))
+        NODES_DICT[(x4, y4, z4)] = S4
 
         # S5
         x5 = round(cellcenter[0] - self.__stepx/2, 4)
         y5 = round(cellcenter[1] + (self.__hcapas**0.5)/2 * self.__stepy, 4)
         z5 = round(cellcenter[2] + self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x5, y5, z5))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                S5 = existingnode
-                break
-            else:
-                S5 = aux
-        NODES_SET.add(S5)
-        del aux
+        S5 = NODES_DICT.get((x5, y5, z5), MACNode(len(NODES_DICT) + 1, (x5, y5, z5)))
+        NODES_DICT[(x5, y5, z5)] = S5
 
         # S6
         x6 = round(cellcenter[0] + self.__stepx/2, 4)
         y6 = round(cellcenter[1] + (self.__hcapas**0.5)/2 * self.__stepy, 4)
         z6 = round(cellcenter[2] - self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x6, y6, z6))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                S6 = existingnode
-                break
-            else:
-                S6 = aux
-        NODES_SET.add(S6)
-        del aux
+        S6 = NODES_DICT.get((x6, y6, z6), MACNode(len(NODES_DICT) + 1, (x6, y6, z6)))
+        NODES_DICT[(x6, y6, z6)] = S6
 
         # B1
         x = round((2 - self.__dstar)*cellcenter[0] - (1-self.__dstar)*(x6+x5)/2, 4)
         y = round((2 - self.__dstar)*cellcenter[1] - (1-self.__dstar)*(y6+y5)/2, 4)
         z = round((2 - self.__dstar)*cellcenter[2] - (1-self.__dstar)*(z6+z5)/2, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                B1 = existingnode
-                break
-            else:
-                B1 = aux
-        NODES_SET.add(B1)
-        del aux
+        B1 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = B1
 
         # B2
         x = round((2 - self.__dstar)*cellcenter[0] - (1-self.__dstar)*(x1+x6)/2, 4)
         y = round((2 - self.__dstar)*cellcenter[1] - (1-self.__dstar)*(y1+y6)/2, 4)
         z = round((2 - self.__dstar)*cellcenter[2] - (1-self.__dstar)*(z1+z6)/2, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                B2 = existingnode
-                break
-            else:
-                B2 = aux
-        NODES_SET.add(B2)
-        del aux
+        B2 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = B2
 
         # B3
         x = round((2 - self.__dstar)*cellcenter[0] - (1-self.__dstar)*(x1+x2)/2, 4)
         y = round((2 - self.__dstar)*cellcenter[1] - (1-self.__dstar)*(y1+y2)/2, 4)
         z = round((2 - self.__dstar)*cellcenter[2] - (1-self.__dstar)*(z1+z2)/2, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                B3 = existingnode
-                break
-            else:
-                B3 = aux
-        NODES_SET.add(B3)
-        del aux
+        B3 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = B3
 
         # B4
         x = round((2 - self.__dstar)*cellcenter[0] - (1-self.__dstar)*(x2+x3)/2, 4)
         y = round((2 - self.__dstar)*cellcenter[1] - (1-self.__dstar)*(y2+y3)/2, 4)
         z = round((2 - self.__dstar)*cellcenter[2] - (1-self.__dstar)*(z2+z3)/2, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                B4 = existingnode
-                break
-            else:
-                B4 = MACNode(len(NODES_SET) + 1, (x, y, z))
-        NODES_SET.add(B4)
-        del aux
+        B4 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = B4
 
         # B5
         x = round((2 - self.__dstar)*cellcenter[0] - (1-self.__dstar)*(x4+x3)/2, 4)
         y = round((2 - self.__dstar)*cellcenter[1] - (1-self.__dstar)*(y4+y3)/2, 4)
         z = round((2 - self.__dstar)*cellcenter[2] - (1-self.__dstar)*(z4+z3)/2, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                B5 = existingnode
-                break
-            else:
-                B5 = aux
-        NODES_SET.add(B5)
-        del aux
+        B5 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = B5
 
         # B6
         x = round((2 - self.__dstar)*cellcenter[0] - (1-self.__dstar)*(x4+x5)/2, 4)
         y = round((2 - self.__dstar)*cellcenter[1] - (1-self.__dstar)*(y4+y5)/2, 4)
         z = round((2 - self.__dstar)*cellcenter[2] - (1-self.__dstar)*(z4+z5)/2, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                B6 = existingnode
-                break
-            else:
-                B6 = aux
-        NODES_SET.add(B6)
-        del aux
+        B6 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = B6
 
         # DN1, DN2, DN3, UP1, UP2, UP3
         x = round(cellcenter[0] + 0.5*self.__stepx, 4)
         y = round(cellcenter[1] - (self.__hcapas**0.5)/2 * self.__stepy, 4)
         z = round(cellcenter[2] - self.__hprisma - self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                DN1 = existingnode
-                break
-            else:
-                DN1 = aux
-        NODES_SET.add(DN1)
-        del aux
+        DN1 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = DN1
 
         x = round(cellcenter[0] - self.__stepx, 4)
         y = round(cellcenter[1], 4)
         z = round(cellcenter[2] - self.__hprisma - self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                DN2 = existingnode
-                break
-            else:
-                DN2 = aux
-        NODES_SET.add(DN2)
-        del aux
+        DN2 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = DN2
 
         x = round(cellcenter[0] + 0.5 * self.__stepx, 4)
         y = round(cellcenter[1] + (self.__hcapas ** 0.5) / 2 * self.__stepy, 4)
         z = round(cellcenter[2] - self.__hprisma - self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                DN3 = existingnode
-                break
-            else:
-                DN3 = aux
-        NODES_SET.add(DN3)
-        del aux
+        DN3 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = DN3
 
         x = round(cellcenter[0] + self.__stepx, 4)
         y = round(cellcenter[1], 4)
         z = round(cellcenter[2] + self.__hprisma + self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                UP1 = existingnode
-                break
-            else:
-                UP1 = aux
-        NODES_SET.add(UP1)
-        del aux
+        UP1 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = UP1
 
         x = round(cellcenter[0] - 0.5 * self.__stepx, 4)
         y = round(cellcenter[1] - (self.__hcapas ** 0.5) / 2 * self.__stepy, 4)
         z = round(cellcenter[2] + self.__hprisma + self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                UP2 = existingnode
-                break
-            else:
-                UP2 = aux
-        NODES_SET.add(UP2)
-        del aux
+        UP2 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = UP2
 
         x = round(cellcenter[0] - 0.5 * self.__stepx, 4)
         y = round(cellcenter[1] + (self.__hcapas ** 0.5) / 2 * self.__stepy, 4)
         z = round(cellcenter[2] + self.__hprisma + self.__heightstar, 4)
-        aux = MACNode(len(NODES_SET) + 1, (x, y, z))
-        for existingnode in NODES_SET:
-            if existingnode == aux:
-                UP3 = existingnode
-                break
-            else:
-                UP3 = aux
-        NODES_SET.add(UP3)
-        del aux
+        UP3 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
+        NODES_DICT[(x, y, z)] = UP3
 
         nodes = (M1, M2, B1, B2, B3, B4, B5, B6, S1, S2, S3, S4, S5, S6, DN1, DN2, DN3, UP1, UP2, UP3)
 
@@ -469,6 +324,7 @@ class MACAuxetic:
                     M2_S4, M2_S6, M1_UP1, M1_UP2, M1_UP3, M2_DN1, M2_DN2, M2_DN3)
 
         return nodes, elements
+
 
 
 def set_structure(**kwargs) -> MACAuxetic:

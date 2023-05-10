@@ -7,7 +7,7 @@ from time import time
 from .MACMaterial import MACMaterial
 from .MACProperty import MACProperty
 from .MACStructure import MACAuxetic
-from .MACGlobals import MAC_VERSION, ELEMENTS_SET, NODES_SET
+from .MACGlobals import MAC_VERSION, ELEMENTS_SET, NODES_DICT
 from .MACCell import MACCell
 from MetamaterialAnalysisCode._modules._centers_RPA import _centers_RPA
 
@@ -51,7 +51,7 @@ class MACModel:
             self.__celldict[i] = MACCell(i, self.__cellstructure, center, elements, nodes, self.__cellmaterial,
                                          self.__cellproperty)
 
-        self.__nodedict = {node.ID: node for node in NODES_SET}
+        self.__nodedict = {node.ID: node for node in NODES_DICT.values()}
         self.__elementdict = {element.ID: element for element in ELEMENTS_SET}
 
     def write_fem(self, path: str, writeheader: bool = True) -> None:

@@ -37,7 +37,7 @@ class MACNode:
 
     # Method to hash a node. It uses the coordinates of the node as hash to be implemented in a set.
     def __hash__(self):
-        return hash(self.Coords)
+        return hash((self.Coords[0], self.Coords[1], self.Coords[2], self.ID))
 
     # Method to print a node. It uses the 8 characters format of Optistruct.
     def __str__(self):

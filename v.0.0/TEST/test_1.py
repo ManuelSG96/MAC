@@ -10,7 +10,7 @@ beam2 = MAC.set_property(id=1, type="PBEAM", material=[material2], area=2000, i1
 cellstructure2 = MAC.set_structure(type="Auxetic", djoint=0.3, dstar=0.3, heightstar=0.4, hcapas=3,
                                    hprisma=2, stepx=1, stepy=1)
 start = time()
-modelo2 = MAC.set_model(modeldimensions=(30, 30, 30), cellstructure=cellstructure2, cellmaterial=[material2],
+modelo2 = MAC.set_model(modeldimensions=(20, 20, 20), cellstructure=cellstructure2, cellmaterial=[material2],
                         cellproperty=[beam2])
 end = time()
 print(f"Tiempo de ejecucion: {end - start} s")
