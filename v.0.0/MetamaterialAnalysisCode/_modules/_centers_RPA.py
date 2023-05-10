@@ -30,17 +30,3 @@ def _centers_RPA(a, h, stx, dimensions) -> np.ndarray[np.ndarray[np.float16, np.
                     centers[i*ncy*ncz + j*ncz + k] = np.array([stx + i*1.5*stx, 2*a + j*2*a, k*h + round(h/2, 4)])
 
     return centers
-
-
-a = 0.866
-h = 4.8
-stx = 1
-dimensions = (50, 50, 50)
-
-start = time()
-centers = _centers_RPA(a, h, stx, dimensions)
-end = time()
-
-print(end - start)
-
-print(centers)

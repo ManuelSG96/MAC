@@ -1,5 +1,6 @@
 # Tests para probar el código de análisis de metamateriales
 import os
+from time import time
 import MetamaterialAnalysisCode as MAC
 
 tabla_strainstress = MAC.set_table(id=20, data=[(0, 0), (0.01, 0.01), (0.02, 0.02), (0.03, 0.03), (0.04, 0.04)])
@@ -8,8 +9,11 @@ material2 = MAC.set_material(id=1, type="MATS1", stressstrain=tabla_strainstress
 beam2 = MAC.set_property(id=1, type="PBEAM", material=[material2], area=2000, i1=0.0001, i2=1, i12=1, j=1)
 cellstructure2 = MAC.set_structure(type="Auxetic", djoint=0.3, dstar=0.3, heightstar=0.4, hcapas=3,
                                    hprisma=2, stepx=1, stepy=1)
-modelo2 = MAC.set_model(modeldimensions=(10, 10, 10), cellstructure=cellstructure2, cellmaterial=[material2],
+start = time()
+modelo2 = MAC.set_model(modeldimensions=(30, 30, 30), cellstructure=cellstructure2, cellmaterial=[material2],
                         cellproperty=[beam2])
+end = time()
+print(f"Tiempo de ejecucion: {end - start} s")
 try:
     os.remove(r"C:\Users\manum\Desktop\TFM\test1.fem")
 except FileNotFoundError:

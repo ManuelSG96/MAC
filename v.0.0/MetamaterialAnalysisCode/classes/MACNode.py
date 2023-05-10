@@ -12,7 +12,7 @@ class MACNode:
         Coords: Coordinates of the node
     """
 
-    def __init__(self, id_: int, coords: tuple[float]):
+    def __init__(self, id_: int, coords: tuple[float, ...]):
         """
         Constructor for MACNode class
         """
