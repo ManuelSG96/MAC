@@ -71,9 +71,9 @@ class MACElement:
                 vv1spaces = " " * (8 - len(str(self.Vvector[1])))
                 vv2spaces = " " * (8 - len(str(self.Vvector[2])))
 
-                return f"CBEAM   {self.ID}{idspaces}{self.Property[0].ID}{propspaces}{self.Nodes[0].ID}{node0spaces}" + \
-                       f"{self.Nodes[1].ID}{node1spaces}{self.Vvector[0]}{vv0spaces}{self.Vvector[1]}{vv1spaces}" + \
-                       f"{self.Vvector[2]}{vv2spaces}\n"
+                return f"CBEAM   {idspaces}{self.ID}{propspaces}{self.Property[0].ID}{node0spaces}{self.Nodes[0].ID}" + \
+                       f"{node1spaces}{self.Nodes[1].ID}{vv0spaces}{self.Vvector[0]}{vv1spaces}{self.Vvector[1]}" + \
+                       f"{vv2spaces}{self.Vvector[2]}\n"
 
             case "CQUAD":
 

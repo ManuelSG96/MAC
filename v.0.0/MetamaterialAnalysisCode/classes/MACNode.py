@@ -50,4 +50,4 @@ class MACNode:
         y = "{:.5f}".format(self.Coords[1])[:7]
         z = "{:.5f}".format(self.Coords[2])[:7]
 
-        return f"GRID    {self.ID}{idspaces}{systemspaces}{x} {y} {z} \n"
+        return f"GRID    {idspaces}{self.ID}{systemspaces} {x} {y} {z}\n"
