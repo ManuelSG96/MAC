@@ -3,6 +3,8 @@ import os
 from time import time
 import MetamaterialAnalysisCode as MAC
 
+start = time()
+
 tabla_strainstress1 = MAC.set_table(id=20, data=[(0, 0), (0.01, 0.01), (0.02, 0.02), (0.03, 0.03), (0.04, 0.04)])
 
 material1 = MAC.set_material(id=1, type="MATS1", stressstrain=tabla_strainstress1, nonlinearity="PLASTIC",
@@ -15,26 +17,21 @@ beam2 = MAC.set_property(id=2, type="PBEAM", material=[material2], area=2000, i1
 beam1 = MAC.set_property(id=1, type="PBEAML", material=[material2], section="ROD", dim1=0.05)
 
 cellstructure1 = MAC.set_structure(type="Auxetic", djoint=0.3, dstar=0.3, heightstar=0.4, hcapas=3,
-                                   hprisma=2, stepx=1, stepy=1)
+                                   hprisma=2, stepx=1, stepy=1, nelem=4)
 
-start = time()
-modelo1 = MAC.set_model(modeldimensions=(20, 20, 20), cellstructure=cellstructure1, cellmaterial=[material2],
+
+modelo1 = MAC.set_model(modeldimensions=(15, 15, 15), cellstructure=cellstructure1, cellmaterial=[material2],
                         cellproperty=[beam1])
 
 # ESTO ELIMINA LOS ELEMENTOS Y NODOS DE LAS CAPAS SUPERIOR E INFERIOR ##################################################
-minz = 10.
-maxz = 1.
-for nodo in modelo1.NodeDict.values():
-    if nodo.Coords[2] > maxz:
-        maxz = nodo.Coords[2]
-    elif nodo.Coords[2] < minz:
-        minz = nodo.Coords[2]
+minz = 0.1
+maxz = 13.8
 
 elementtodel = set()
 nodetodel = set()
 for elementkey in modelo1.ElementDict.keys():
     for node in modelo1.ElementDict[elementkey].Nodes:
-        if node.Coords[2] == minz or node.Coords[2] == maxz:
+        if node.Coords[2] < (minz+0.1) or node.Coords[2] > (maxz-0.1):
             nodetodel.add(node.ID)
             elementtodel.add(elementkey)
 
@@ -45,8 +42,7 @@ for nodekey in nodetodel:
     del modelo1.NodeDict[nodekey]
 ########################################################################################################################
 
-end = time()
-print(f"Tiempo de ejecucion: {end - start} s")
+
 try:
     os.remove(r"C:\Users\manum\Desktop\TFM\test1.fem")
 except FileNotFoundError:
@@ -93,3 +89,6 @@ subcase3 = MAC.set_subcase(id=3, label="nonlinear", loads=[enforcedispl1], const
 
 analysis2 = MAC.set_analysis(model=modelo1, subcases=[subcase3])
 analysis2.write_fem(r"C:\Users\manum\Desktop\TFM\test10.fem")
+
+end = time()
+print(f"Tiempo de ejecucion: {end - start} s")

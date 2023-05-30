@@ -82,7 +82,8 @@ class MACSubcase:
 
         elif self.Label.startswith("nonlinear"):
             return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + case + \
-                   f"  NLAPARM(LGDISP) =        {self.NLaprmLD.ID}\n" + f"  NLOUT =        {self.NLout.ID}\n"
+                   f"  NLAPARM(LGDISP) =        {self.NLaprmLD.ID}\n" + \
+                   f"  NLOUT =        {self.NLout.ID}\n" + f"NLAPARM(LGDISP) =        {self.NLaprmLD.ID}\n"
 
 
 def set_subcase(id: int, label: str, constraints: list[MACSpc, ...], loads: list[MACForce | MACSpc, ...] = None,

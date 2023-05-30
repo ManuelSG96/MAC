@@ -21,7 +21,7 @@ class MACNLparmLD:
         """
         idspaces = " " * (8 - len(str(self.ID)))
         dtspaces = " " * (8 - len(str(self.DT)))
-        return f"NLPARM  {idspaces}{self.ID}{dtspaces}{self.DT}\n"
+        return f"NLPARM  {idspaces}{self.ID}        {dtspaces}{self.DT}\n"
 
 
 class MACNLout:
