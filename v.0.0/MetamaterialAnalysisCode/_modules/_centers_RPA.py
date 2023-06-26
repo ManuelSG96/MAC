@@ -3,7 +3,6 @@ This is a hidden module that creates the Right Prism Auxetic cell centers.
 """
 
 import numpy as np
-from time import time
 
 
 def _centers_RPA(a, h, stx, dimensions) -> np.ndarray[np.ndarray[np.float16, np.float16]]:

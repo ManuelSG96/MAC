@@ -1,6 +1,7 @@
 """
 Cell Structure module for Metamaterial Analysis Code (MAC). It represents the structure.
 """
+import sys
 
 from .MACMaterial import MACMaterial
 from .MACProperty import MACProperty
@@ -89,14 +90,14 @@ class MACAuxetic:
 
         # S2
         x2 = round(cellcenter[0] + self.__stepx/2, 4)
-        y2 = round(cellcenter[1] - (self.__hcapas**0.5)/2 * self.__stepy, 4)
+        y2 = round(cellcenter[1] - (3**0.5)/2 * self.__stepy, 4)
         z2 = round(cellcenter[2] - self.__heightstar, 4)
         S2 = NODES_DICT.get((x2, y2, z2), MACNode(len(NODES_DICT) + 1, (x2, y2, z2)))
         NODES_DICT[(x2, y2, z2)] = S2
 
         # S3
         x3 = round(cellcenter[0] - self.__stepx/2, 4)
-        y3 = round(cellcenter[1] - (self.__hcapas**0.5)/2 * self.__stepy, 4)
+        y3 = round(cellcenter[1] - (3**0.5)/2 * self.__stepy, 4)
         z3 = round(cellcenter[2] + self.__heightstar, 4)
         S3 = NODES_DICT.get((x3, y3, z3), MACNode(len(NODES_DICT) + 1, (x3, y3, z3)))
         NODES_DICT[(x3, y3, z3)] = S3
@@ -110,14 +111,14 @@ class MACAuxetic:
 
         # S5
         x5 = round(cellcenter[0] - self.__stepx/2, 4)
-        y5 = round(cellcenter[1] + (self.__hcapas**0.5)/2 * self.__stepy, 4)
+        y5 = round(cellcenter[1] + (3**0.5)/2 * self.__stepy, 4)
         z5 = round(cellcenter[2] + self.__heightstar, 4)
         S5 = NODES_DICT.get((x5, y5, z5), MACNode(len(NODES_DICT) + 1, (x5, y5, z5)))
         NODES_DICT[(x5, y5, z5)] = S5
 
         # S6
         x6 = round(cellcenter[0] + self.__stepx/2, 4)
-        y6 = round(cellcenter[1] + (self.__hcapas**0.5)/2 * self.__stepy, 4)
+        y6 = round(cellcenter[1] + (3**0.5)/2 * self.__stepy, 4)
         z6 = round(cellcenter[2] - self.__heightstar, 4)
         S6 = NODES_DICT.get((x6, y6, z6), MACNode(len(NODES_DICT) + 1, (x6, y6, z6)))
         NODES_DICT[(x6, y6, z6)] = S6
@@ -166,7 +167,7 @@ class MACAuxetic:
 
         # DN1, DN2, DN3, UP1, UP2, UP3
         x = round(cellcenter[0] + 0.5*self.__stepx, 4)
-        y = round(cellcenter[1] - (self.__hcapas**0.5)/2 * self.__stepy, 4)
+        y = round(cellcenter[1] - (3**0.5)/2 * self.__stepy, 4)
         z = round(cellcenter[2] - self.__hprisma - self.__heightstar, 4)
         DN1 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
         NODES_DICT[(x, y, z)] = DN1
@@ -178,7 +179,7 @@ class MACAuxetic:
         NODES_DICT[(x, y, z)] = DN2
 
         x = round(cellcenter[0] + 0.5 * self.__stepx, 4)
-        y = round(cellcenter[1] + (self.__hcapas ** 0.5) / 2 * self.__stepy, 4)
+        y = round(cellcenter[1] + (3**0.5) / 2 * self.__stepy, 4)
         z = round(cellcenter[2] - self.__hprisma - self.__heightstar, 4)
         DN3 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
         NODES_DICT[(x, y, z)] = DN3
@@ -190,13 +191,13 @@ class MACAuxetic:
         NODES_DICT[(x, y, z)] = UP1
 
         x = round(cellcenter[0] - 0.5 * self.__stepx, 4)
-        y = round(cellcenter[1] - (self.__hcapas ** 0.5) / 2 * self.__stepy, 4)
+        y = round(cellcenter[1] - (3**0.5) / 2 * self.__stepy, 4)
         z = round(cellcenter[2] + self.__hprisma + self.__heightstar, 4)
         UP2 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
         NODES_DICT[(x, y, z)] = UP2
 
         x = round(cellcenter[0] - 0.5 * self.__stepx, 4)
-        y = round(cellcenter[1] + (self.__hcapas ** 0.5) / 2 * self.__stepy, 4)
+        y = round(cellcenter[1] + (3**0.5) / 2 * self.__stepy, 4)
         z = round(cellcenter[2] + self.__hprisma + self.__heightstar, 4)
         UP3 = NODES_DICT.get((x, y, z), MACNode(len(NODES_DICT) + 1, (x, y, z)))
         NODES_DICT[(x, y, z)] = UP3
@@ -204,6 +205,9 @@ class MACAuxetic:
         if self.__nelem == 1:
 
             nodes = (M1, M2, B1, B2, B3, B4, B5, B6, S1, S2, S3, S4, S5, S6, DN1, DN2, DN3, UP1, UP2, UP3)
+
+            if M1.Coords == M2.Coords:
+                sys.exit("M1 es coincidente con M2 porque v1 = 0. Usar el metodo de 4 vigas")
 
             # CBEAMS that connect the nodes and build the cell
             elemcount = len(ELEMENTS_SET)
@@ -409,83 +413,86 @@ class MACAuxetic:
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
                                        [internodes[-1], B6], [mat], [prop], vvector))
 
-            # M2_B1 intermediate nodes
-            for coord in _gen3p(M2.Coords, B1.Coords):
-                internodes.append(MACNode(len(NODES_DICT) + 1, coord))
-                NODES_DICT[coord] = internodes[-1]
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], B1], [mat], [prop], vvector))
+            # Esto se añade porque M1 coincide con M2 si v1 = 0
+            if M1.Coords != M2.Coords:
 
-            # M2_B2 intermediate nodes
-            for coord in _gen3p(M2.Coords, B2.Coords):
-                internodes.append(MACNode(len(NODES_DICT) + 1, coord))
-                NODES_DICT[coord] = internodes[-1]
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], B2], [mat], [prop], vvector))
+                # M2_B1 intermediate nodes
+                for coord in _gen3p(M2.Coords, B1.Coords):
+                    internodes.append(MACNode(len(NODES_DICT) + 1, coord))
+                    NODES_DICT[coord] = internodes[-1]
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [M2, internodes[-3]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-1], B1], [mat], [prop], vvector))
 
-            # M2_B3 intermediate nodes
-            for coord in _gen3p(M2.Coords, B3.Coords):
-                internodes.append(MACNode(len(NODES_DICT) + 1, coord))
-                NODES_DICT[coord] = internodes[-1]
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], B3], [mat], [prop], vvector))
+                # M2_B2 intermediate nodes
+                for coord in _gen3p(M2.Coords, B2.Coords):
+                    internodes.append(MACNode(len(NODES_DICT) + 1, coord))
+                    NODES_DICT[coord] = internodes[-1]
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [M2, internodes[-3]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-1], B2], [mat], [prop], vvector))
 
-            # M2_B4 intermediate nodes
-            for coord in _gen3p(M2.Coords, B4.Coords):
-                internodes.append(MACNode(len(NODES_DICT) + 1, coord))
-                NODES_DICT[coord] = internodes[-1]
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], B4], [mat], [prop], vvector))
+                # M2_B3 intermediate nodes
+                for coord in _gen3p(M2.Coords, B3.Coords):
+                    internodes.append(MACNode(len(NODES_DICT) + 1, coord))
+                    NODES_DICT[coord] = internodes[-1]
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [M2, internodes[-3]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-1], B3], [mat], [prop], vvector))
 
-            # M2_B5 intermediate nodes
-            for coord in _gen3p(M2.Coords, B5.Coords):
-                internodes.append(MACNode(len(NODES_DICT) + 1, coord))
-                NODES_DICT[coord] = internodes[-1]
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], B5], [mat], [prop], vvector))
+                # M2_B4 intermediate nodes
+                for coord in _gen3p(M2.Coords, B4.Coords):
+                    internodes.append(MACNode(len(NODES_DICT) + 1, coord))
+                    NODES_DICT[coord] = internodes[-1]
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [M2, internodes[-3]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-1], B4], [mat], [prop], vvector))
 
-            # M2_B6 intermediate nodes
-            for coord in _gen3p(M2.Coords, B6.Coords):
-                internodes.append(MACNode(len(NODES_DICT) + 1, coord))
-                NODES_DICT[coord] = internodes[-1]
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
-            elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], B6], [mat], [prop], vvector))
+                # M2_B5 intermediate nodes
+                for coord in _gen3p(M2.Coords, B5.Coords):
+                    internodes.append(MACNode(len(NODES_DICT) + 1, coord))
+                    NODES_DICT[coord] = internodes[-1]
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [M2, internodes[-3]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-1], B5], [mat], [prop], vvector))
+
+                # M2_B6 intermediate nodes
+                for coord in _gen3p(M2.Coords, B6.Coords):
+                    internodes.append(MACNode(len(NODES_DICT) + 1, coord))
+                    NODES_DICT[coord] = internodes[-1]
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [M2, internodes[-3]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
+                                           [internodes[-1], B6], [mat], [prop], vvector))
 
             # S1_B6 intermediate nodes
             for coord in _gen3p(S1.Coords, B6.Coords):
@@ -726,78 +733,78 @@ class MACAuxetic:
                 internodes.append(MACNode(len(NODES_DICT) + 1, coord))
                 NODES_DICT[coord] = internodes[-1]
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M1, internodes[-3]], [mat], [prop], vvector))
+                                       [M1, internodes[-3]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], UP1], [mat], [prop], vvector))
+                                       [internodes[-1], UP1], [mat], [prop], vvector, aux=True))
 
             # M1_UP2 intermediate nodes
             for coord in _gen3p(M1.Coords, UP2.Coords):
                 internodes.append(MACNode(len(NODES_DICT) + 1, coord))
                 NODES_DICT[coord] = internodes[-1]
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M1, internodes[-3]], [mat], [prop], vvector))
+                                       [M1, internodes[-3]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], UP2], [mat], [prop], vvector))
+                                       [internodes[-1], UP2], [mat], [prop], vvector, aux=True))
 
             # M1_UP3 intermediate nodes
             for coord in _gen3p(M1.Coords, UP3.Coords):
                 internodes.append(MACNode(len(NODES_DICT) + 1, coord))
                 NODES_DICT[coord] = internodes[-1]
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M1, internodes[-3]], [mat], [prop], vvector))
+                                       [M1, internodes[-3]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], UP3], [mat], [prop], vvector))
+                                       [internodes[-1], UP3], [mat], [prop], vvector, aux=True))
 
             # M2_DN1 intermediate nodes
             for coord in _gen3p(M2.Coords, DN1.Coords):
                 internodes.append(MACNode(len(NODES_DICT) + 1, coord))
                 NODES_DICT[coord] = internodes[-1]
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
+                                       [M2, internodes[-3]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                                       [internodes[-3], internodes[-2]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                                       [internodes[-2], internodes[-1]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [internodes[-1], DN1], [mat], [prop], vvector))
+                                       [internodes[-1], DN1], [mat], [prop], vvector, aux=True))
 
             # M2_DN2 intermediate nodes
             for coord in _gen3p(M2.Coords, DN2.Coords):
                 internodes.append(MACNode(len(NODES_DICT) + 1, coord))
                 NODES_DICT[coord] = internodes[-1]
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                       [M2, internodes[-3]], [mat], [prop], vvector))
+                                       [M2, internodes[-3]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                                        [internodes[-3], internodes[-2]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                                        [internodes[-2], internodes[-1]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [internodes[-1], DN2], [mat], [prop], vvector))
+                                        [internodes[-1], DN2], [mat], [prop], vvector, aux=True))
 
             # M2_DN3 intermediate nodes
             for coord in _gen3p(M2.Coords, DN3.Coords):
                 internodes.append(MACNode(len(NODES_DICT) + 1, coord))
                 NODES_DICT[coord] = internodes[-1]
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [M2, internodes[-3]], [mat], [prop], vvector))
+                                        [M2, internodes[-3]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [internodes[-3], internodes[-2]], [mat], [prop], vvector))
+                                        [internodes[-3], internodes[-2]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [internodes[-2], internodes[-1]], [mat], [prop], vvector))
+                                        [internodes[-2], internodes[-1]], [mat], [prop], vvector, aux=True))
             elements.append(MACElement(elemcount + len(elements) + 1, "CBEAM",
-                                        [internodes[-1], DN3], [mat], [prop], vvector))
+                                        [internodes[-1], DN3], [mat], [prop], vvector, aux=True))
 
             for element in elements:
                 ELEMENTS_SET.add(element)

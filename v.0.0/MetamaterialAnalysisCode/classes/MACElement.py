@@ -21,7 +21,7 @@ class MACElement:
     """
 
     def __init__(self, id_: int, type_: str, nodes: list[MACNode], material: list[MACMaterial],
-                 properties: list[MACProperty], vvector: tuple):
+                 properties: list[MACProperty], vvector: tuple, aux: bool = False):
         """
         Constructor for MACElement class
         """
@@ -31,6 +31,7 @@ class MACElement:
         self.__material = material
         self.__properties = properties
         self.__vvector = vvector
+        self.Aux = aux  # Propiedad auxiliar para saber si es de los elementos que se pueden borrar
 
     @property
     def ID(self):

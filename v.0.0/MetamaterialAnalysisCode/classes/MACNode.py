@@ -24,8 +24,12 @@ class MACNode:
         return self.__id
 
     @property
-    def Coords(self):
+    def Coords(self) -> tuple:
         return self.__coords
+
+    @Coords.setter
+    def Coords(self, value):
+        self.__coords = value
 
     # Method to compare two nodes. It returns True if the nodes are the same (they have the same coordinates),
     # False otherwise.

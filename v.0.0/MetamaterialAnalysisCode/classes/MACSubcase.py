@@ -21,7 +21,7 @@ class MACSubcase:
 
     def __init__(self, id_: int, label: str, load: list[MACForce | MACSpc, ...], spc: list[MACSpc, ...],
                  eigr: MACEigrl = None, stat_sub: 'MACSubcase' = None, nlaprmld: MACNLparmLD = None,
-                 nlout: MACNLout = None):
+                 nlout: MACNLout = None, output: list[str] = None):
         """
         Constructor for MACSubcase class
         """
@@ -45,6 +45,7 @@ class MACSubcase:
         self.StatSub = stat_sub
         self.NLaprmLD = nlaprmld
         self.NLout = nlout
+        self.Output = output
 
     def __str__(self):
         """
@@ -53,12 +54,16 @@ class MACSubcase:
 
         idspaces = " " * 8
         case = ""
+        outstr = ""
+        if isinstance(self.Output, list):
+            for out in self.Output:
+                outstr += "  " + out + "\n"
 
-        if isinstance(self.Load[0], MACForce):
+        if not self.Label.startswith("buckling") and isinstance(self.Load[0], MACForce):
             loadspaces = " " * (8 - len(str(self.Load[0].ID)))
             case += f"  LOAD = {loadspaces}{self.Load[0].ID}\n"
 
-        elif isinstance(self.Load[0], MACSpc):
+        elif not self.Label.startswith("buckling") and isinstance(self.Load[0], MACSpc):
             loadspaces = " " * (8 - len(str(self.Load[0].ID)))
             case += f"  LOAD = {loadspaces}{self.Load[0].ID}\n"
 
@@ -67,7 +72,7 @@ class MACSubcase:
 
         # returns the subcase depending on its label -------------------------------------------------------------------
         if self.Label.startswith("linear"):
-            return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + case
+            return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + case + outstr
 
         elif self.Label.startswith("buckling"):
             if self.StatSub is None:
@@ -78,16 +83,17 @@ class MACSubcase:
 
             return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + "ANALYSIS BUCK\n" + case + \
                    f"  METHOD(STRUCTURE) ={methodspace}{self.Eigr.ID}\n" + \
-                   f"  STATSUB(BUCKLING) ={subspaces}{self.StatSub.ID}\n"
+                   f"  STATSUB(BUCKLING) ={subspaces}{self.StatSub.ID}\n" + outstr
 
         elif self.Label.startswith("nonlinear"):
-            return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + case + \
-                   f"  NLAPARM(LGDISP) =        {self.NLaprmLD.ID}\n" + \
-                   f"  NLOUT =        {self.NLout.ID}\n" + f"NLAPARM(LGDISP) =        {self.NLaprmLD.ID}\n"
+            return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + "ANALYSIS NLSTAT\n" + case + \
+                   f"  NLPARM(LGDISP) =        {self.NLaprmLD.ID}\n" + \
+                   f"  NLOUT =        {self.NLout.ID}\n" + outstr
 
 
 def set_subcase(id: int, label: str, constraints: list[MACSpc, ...], loads: list[MACForce | MACSpc, ...] = None,
-                eigr: MACEigrl = None, stat_sub: object = None, nlparmld: MACNLparmLD = None, nlout: MACNLout = None):
+                eigr: MACEigrl = None, stat_sub: object = None, nlparmld: MACNLparmLD = None, nlout: MACNLout = None,
+                output: list[str] = None):
     """
     Function to set a subcase. It returns a MACSubcase object.
 
@@ -114,4 +120,4 @@ def set_subcase(id: int, label: str, constraints: list[MACSpc, ...], loads: list
     if len(ids) > 1:
         raise ValueError("All the constrains of a subcase must have the same ID")
 
-    return MACSubcase(id, label, loads, constraints, eigr, stat_sub, nlparmld, nlout)
+    return MACSubcase(id, label, loads, constraints, eigr, stat_sub, nlparmld, nlout, output)
