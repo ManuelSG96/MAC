@@ -2,7 +2,7 @@ import MetamaterialAnalysisCode as mac
 
 # Unidades en milimetros
 
-enf_displ = -15  # Desplazamiento forzado
+enf_displ = -5  # Desplazamiento forzado
 
 # Definicion de materiales
 aluminio = mac.set_material(id=1, type="MAT1", e=70000, nu=0.3, rho=0.0027)
@@ -91,8 +91,8 @@ for viga in vigas:
                                             eigr=eigr1, stat_sub=subcase_ln)
 
             # Creación del subcaso de análisis no lineal
-            nlparmld = mac.set_nlparmld(id=1, dt=0.1)
-            nlout = mac.set_nlout(id=2, nint=10)
+            nlparmld = mac.set_nlparmld(id=1, dt=0.05)
+            nlout = mac.set_nlout(id=2, nint=20)
             subcase_nonln = mac.set_subcase(id=3, label="nonlinear", loads=[enforce_displ],
                                             constraints=[constr_displ, constr_bot],
                                             nlparmld=nlparmld, nlout=nlout, output=["SPCFORCE"])
@@ -101,7 +101,7 @@ for viga in vigas:
             analysis = mac.set_analysis(model=modelo, subcases=[subcase_ln, subcase_buckl, subcase_nonln])
 
             # Escritura en un archivo .fem el análisis listo para correr por optistruct
-            analysis.write_fem(r"C:\Users\manum\Desktop\TFM\cubes\\" + f"cube_{mat[count]}_v1={v1}_v2={v2}.fem" )
+            analysis.write_fem(r"C:\Users\manum\Desktop\TFM\cubes2\\" + f"cube_{mat[count]}_v1={v1}_v2={v2}.fem" )
 
             # Borrado de la memoria. El uso de variables globales obliga a borrar la memoria.
             del analysis

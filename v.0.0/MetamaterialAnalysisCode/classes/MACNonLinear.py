@@ -8,12 +8,13 @@ class MACNLparmLD:
     Class for the NonLinear Parameters for Large Displacements (NLparmLD).
     """
 
-    def __init__(self, id: int, dt: float):
+    def __init__(self, id: int, ninc: int, dt: float):
         """
         Constructor for MACNLparmLD class
         """
         self.ID = id
         self.DT = dt
+        self.Ninc = ninc
 
     def __str__(self):
         """
@@ -21,7 +22,8 @@ class MACNLparmLD:
         """
         idspaces = " " * (8 - len(str(self.ID)))
         dtspaces = " " * (8 - len(str(self.DT)))
-        return f"NLPARM  {idspaces}{self.ID}        {dtspaces}{self.DT}\n"
+        nincspaces = " " * (8 - len(str(self.Ninc)))
+        return f"NLPARM  {idspaces}{self.ID}{nincspaces}{self.Ninc}{dtspaces}{self.DT}\n"
 
 
 class MACNLout:
@@ -45,11 +47,11 @@ class MACNLout:
         return f"NLOUT   {idspaces}{self.ID}    NINT{nintspaces}{self.NINT}\n"
 
 
-def set_nlparmld(id: int, dt: float):
+def set_nlparmld(id: int, ninc: int, dt: float):
     """
     Function to create a NonLinear Parameters for Large Displacements (NLaprmLD) class.
     """
-    return MACNLparmLD(id, dt)
+    return MACNLparmLD(id, ninc, dt)
 
 
 def set_nlout(id: int, nint: int):

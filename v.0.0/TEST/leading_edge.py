@@ -1,5 +1,4 @@
 import sys
-
 import MetamaterialAnalysisCode as mac
 
 # Unidades en milimetros
@@ -18,6 +17,7 @@ beam_al = mac.set_property(id=1, type="PBEAML", material=[aluminio], section="RO
 beam_ac = mac.set_property(id=2, type="PBEAML", material=[acero], section="ROD", dim1=0.5)
 beam_ti = mac.set_property(id=3, type="PBEAML", material=[titanio], section="ROD", dim1=0.5)
 vigas = [beam_al, beam_ac, beam_ti]
+vigas = [beam_al]
 
 # Parametros de la celda
 v1list = [round(-0.8+i*0.2, 1) for i in range(9)]
@@ -71,16 +71,25 @@ for viga in vigas:
             for nodekey in nodetodel:
                 del modelo.NodeDict[nodekey]
 
-            nodes_force = set()
+            nodes_force = list()
+            for cell in modelo.CellDict.values():
+                aa = cell.Nodes[0]
+                if v1 <= 0:
+                    if cell.Nodes[0].Coords[2] == minz:
+                        nodes_force.append(cell.Nodes[0].ID)
+                else:
+                    if cell.Nodes[1].Coords[2] == minz:
+                        nodes_force.append(cell.Nodes[1].ID)
+
             for node in modelo.NodeDict.values():
                 # aux = (node.Coords[0], node.Coords[1], node.Coords[2] + avgz*math.cos((node.Coords[1]-avgy)/avgy))
-                if node.Coords[2] == minz:
-                    nodes_force.add(node.ID)
                 aux = (node.Coords[0],
                        node.Coords[1],
                        node.Coords[2] + avgz / 2 * (((node.Coords[1] - avgy) / avgy) ** 4 + avgz / 4 * (
                                    (node.Coords[1] - avgy) / avgy) ** 2))
                 node.Coords = aux
+
+
 
             # Calculo de los nodos que estarán restringidos
             node_spc = [nodo for nodo in modelo.NodeDict.values() if (modelo.NodeDict[nodo.ID].Coords[1] == 0 or
@@ -90,7 +99,7 @@ for viga in vigas:
             forces_list = list()
             for node in nodes_force:
                 forces_list.append(mac.set_load(id=1, type="FORCE", nodes=[modelo.NodeDict[node]], direction=(0, 0, 1),
-                                                magnitude=0.7*(113.795-modelo.NodeDict[node].Coords[2])))
+                                                magnitude=2.5*0.7*(120+minz-modelo.NodeDict[node].Coords[2])))
 
             # Dedfinicion de la restricción
             constr_bot = mac.set_constraint(id=2, nodes=node_spc, components=[1,2,3], displacement=0)
@@ -106,7 +115,7 @@ for viga in vigas:
                                             eigr=eigr1, stat_sub=subcase_ln)
 
             # Creación del subcaso de análisis no lineal
-            nlparmld = mac.set_nlparmld(id=1, dt=0.1)
+            nlparmld = mac.set_nlparmld(id=1, ninc=10, dt=0.1)
             nlout = mac.set_nlout(id=2, nint=10)
             subcase_nonln = mac.set_subcase(id=3, label="nonlinear", loads=forces_list,
                                             constraints=[constr_bot],
@@ -116,7 +125,7 @@ for viga in vigas:
             analysis = mac.set_analysis(model=modelo, subcases=[subcase_ln, subcase_buckl, subcase_nonln])
 
             # Escritura en un archivo .fem el análisis listo para correr por optistruct
-            analysis.write_fem(r"C:\Users\manum\Desktop\TFM\leading_edge\\" + f"le_{mat[count]}_v1={v1}_v2={v2}.fem")
+            analysis.write_fem(r"C:\Users\manum\Desktop\TFM\leading_edge3\\" + f"le_{mat[count]}_v1={v1}_v2={v2}.fem")
 
             # Borrado de la memoria. El uso de variables globales obliga a borrar la memoria.
             del analysis

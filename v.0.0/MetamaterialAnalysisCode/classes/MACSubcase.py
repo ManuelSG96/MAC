@@ -52,7 +52,7 @@ class MACSubcase:
         Method to print a subcase. It uses the 8 characters format of Optistruct.
         """
 
-        idspaces = " " * 8
+        idspaces = " "
         case = ""
         outstr = ""
         if isinstance(self.Output, list):
@@ -60,15 +60,15 @@ class MACSubcase:
                 outstr += "  " + out + "\n"
 
         if not self.Label.startswith("buckling") and isinstance(self.Load[0], MACForce):
-            loadspaces = " " * (8 - len(str(self.Load[0].ID)))
-            case += f"  LOAD = {loadspaces}{self.Load[0].ID}\n"
+            loadspaces = " "
+            case += f"  LOAD ={loadspaces}{self.Load[0].ID}\n"
 
         elif not self.Label.startswith("buckling") and isinstance(self.Load[0], MACSpc):
-            loadspaces = " " * (8 - len(str(self.Load[0].ID)))
-            case += f"  LOAD = {loadspaces}{self.Load[0].ID}\n"
+            loadspaces = " "
+            case += f"  LOAD ={loadspaces}{self.Load[0].ID}\n"
 
-        loadspaces = " " * (8 - len(str(self.Spc[0].ID)))
-        case += f"  SPC = {loadspaces}{self.Spc[0].ID}\n"
+        loadspaces = " "
+        case += f"  SPC ={loadspaces}{self.Spc[0].ID}\n"
 
         # returns the subcase depending on its label -------------------------------------------------------------------
         if self.Label.startswith("linear"):
@@ -78,8 +78,8 @@ class MACSubcase:
             if self.StatSub is None:
                 raise ValueError("Buckling subcase needs a linear static subcase")
             else:
-                subspaces = " " * 8
-                methodspace = " " * 8
+                subspaces = " "
+                methodspace = " "
 
             return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + "ANALYSIS BUCK\n" + case + \
                    f"  METHOD(STRUCTURE) ={methodspace}{self.Eigr.ID}\n" + \
@@ -87,8 +87,8 @@ class MACSubcase:
 
         elif self.Label.startswith("nonlinear"):
             return f"SUBCASE{idspaces}{self.ID}\n" + f"  LABEL {self.Label}\n" + "ANALYSIS NLSTAT\n" + case + \
-                   f"  NLPARM(LGDISP) =        {self.NLaprmLD.ID}\n" + \
-                   f"  NLOUT =        {self.NLout.ID}\n" + outstr
+                   f"  NLPARM(LGDISP) = {self.NLaprmLD.ID}\n" + \
+                   f"  NLOUT = {self.NLout.ID}\n" + outstr
 
 
 def set_subcase(id: int, label: str, constraints: list[MACSpc, ...], loads: list[MACForce | MACSpc, ...] = None,

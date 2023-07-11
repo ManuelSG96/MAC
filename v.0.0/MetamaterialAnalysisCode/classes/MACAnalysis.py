@@ -68,7 +68,7 @@ class MACAnalysis:
             print(f"File {pathfem} already exists. It has been overwritten.")
 
         today = datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
-        analysis_name = pathfem.split("\\")[-1].split(".")[0]
+        analysis_name = pathfem.split("\\")[-1].rsplit(".", 1)[0]
         macverlen = 78 - (len(MAC_VERSION) + len("$ MAC version: "))
         analysis_namelen = 78 - (len(analysis_name) + len("$ Analysis Name: "))
 

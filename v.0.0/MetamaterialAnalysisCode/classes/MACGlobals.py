@@ -10,7 +10,7 @@ NODES_DICT = dict()
 global ELEMENTS_SET
 ELEMENTS_SET: Set[MACElement] = set()
 
-MAC_VERSION = "0.0"
+MAC_VERSION = "1.1"
 
 AUTHOR = "Manuel Sanchez Garcia"
 CONTRIBUTORS = []

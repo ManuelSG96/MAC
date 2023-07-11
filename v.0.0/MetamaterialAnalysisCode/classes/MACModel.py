@@ -34,7 +34,7 @@ class MACModel:
         self.__cellstructure = cellstructure
         self.__cellmaterial = cellmaterial
         self.__cellproperty = cellproperty
-        self.__celldict = {}
+        self.CellDict: dict[MACCell] = {}
 
         # Function to generate the cells centers for auxetic structures
         cloud_set = _centers_RPA(a=round((3**0.5) * 0.5 * self.__cellstructure.Stepy, 4),
@@ -49,7 +49,7 @@ class MACModel:
                                                          prop=self.__cellproperty[0], vvector=(0.0, 0.0, 1.0)
                                                         )
 
-            self.__celldict[i] = MACCell(i, self.__cellstructure, center, elements, nodes, self.__cellmaterial,
+            self.CellDict[i] = MACCell(i, self.__cellstructure, center, elements, nodes, self.__cellmaterial,
                                          self.__cellproperty)
 
         self.NodeDict = {node.ID: node for node in NODES_DICT.values()}
@@ -69,7 +69,7 @@ class MACModel:
             if writeheader:
 
                 today = datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
-                analysis_name = path.split("\\")[-1].split(".")[0]
+                analysis_name = path.split("\\")[-1].rsplit(".", 1)[0]
                 macverlen = 78 - (len(MAC_VERSION) + len("$$  MAC version: "))
                 analysis_namelen = 78 - (len(analysis_name) + len("$$  Analysis Name: "))
 
