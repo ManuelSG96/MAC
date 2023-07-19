@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name = 'Metamaterial_Analysis_Code',
-    version = '1.0',
+    version = '1.1',
     author = 'Manuel Sánchez García',
     description = 'Code for the analysis of metamaterials',
     long_description = open(
